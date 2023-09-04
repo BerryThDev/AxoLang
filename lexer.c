@@ -1,18 +1,34 @@
 #include "lexer.h"
+#include <stddef.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 #define DONE 1
+#define TOKEN_LIST_STARTING_SIZE 50
 
 Token* analyze(FILE* file, int* token_size) {
-    Token* tokens = malloc(sizeof(Token) * 100);
+    Token* tokens = malloc(sizeof(Token) * TOKEN_LIST_STARTING_SIZE);
+    int current_token_size = TOKEN_LIST_STARTING_SIZE;
     int status = 0;
 
     while (status != DONE) {
         tokens[*token_size] = read_until_next_token(file, &status);
         (*token_size)++;
+
+        if(*token_size > current_token_size - 1) {
+           int new_size = current_token_size * 2;
+           Token* possible_ptr = realloc(tokens, new_size * sizeof(Token));
+
+           if(possible_ptr != NULL) {
+               current_token_size = new_size;
+               tokens = possible_ptr;
+           } else {
+               printf("Error: Unable to finish lexing. Failed to allocate enough memory.");
+               break;
+           }
+        }
     }
 
     return tokens;

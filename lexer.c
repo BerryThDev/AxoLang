@@ -10,11 +10,18 @@
 
 Token* analyze(FILE* file, int* token_size) {
     Token* tokens = malloc(sizeof(Token) * TOKEN_LIST_STARTING_SIZE);
+
+    if(tokens == NULL) {
+        printf("Error: Unable to finish lexing. Failed to allocate enough memory.");
+        return tokens;
+    }
+
     int current_token_size = TOKEN_LIST_STARTING_SIZE;
     int status = 0;
 
     while (status != DONE) {
-        tokens[*token_size] = read_until_next_token(file, &status);
+        Token current_token = read_until_next_token(file, &status);
+        tokens[*token_size] = current_token;
         (*token_size)++;
 
         if(*token_size > current_token_size - 1) {
@@ -28,6 +35,7 @@ Token* analyze(FILE* file, int* token_size) {
                printf("Error: Unable to finish lexing. Failed to allocate enough memory.");
                break;
            }
+
         }
     }
 
@@ -65,45 +73,5 @@ Token read_until_next_token(FILE* file, int* status) {
     } else {
        return ILLEGAL; 
     }
-}
-
-char* token_name(Token token) {
-    switch (token) {
-        case IF: {
-            return "if";
-            break;
-        }
-        case LET: {
-            return "let";
-            break;
-        }
-        case SEMI_COLON: {
-            return ";";
-            break;
-        }
-        case ILLEGAL: {
-            return "";
-            break;
-        }
-    }
-
-    return "";
-}
-
-Token token_from_name(char* token_name) {
-   if(strcmp(token_name, "if") == 0) {
-       return IF;
-   }
-
-   if(strcmp(token_name, "let") == 0) {
-       return LET;
-   }
-
-
-   if(strcmp(token_name, ";") == 0) {
-       return SEMI_COLON;
-   }
-
-   return ILLEGAL;
 }
 

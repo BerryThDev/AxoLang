@@ -1,16 +1,5 @@
 #include <stdio.h>
-
-typedef enum {
-    IF,
-    LET,
-    SEMI_COLON,
-    ILLEGAL,
-} Token;
-
-
-char* token_name(Token token); 
-
-Token token_from_name(char* token_name); 
+#include "token.h"
 
 Token* analyze(FILE *file, int* token_size);
 
